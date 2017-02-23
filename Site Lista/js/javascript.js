@@ -57,6 +57,7 @@ confereIgual = function(){
 			},
 			success: print
 		});
+		$('#abrir').modal('hide');
 	}else{
 		$('#alerta').show();
 		alert("Item já existente");
@@ -77,7 +78,7 @@ adiciona = function (){
 edita = function(){ 
 	save();
 	if(NOME=="" || VALOR=="" || STATUS=="" || ESTOQUE==""){
-
+	alert("Preencha todos os campos");
 	}else{
 		$.ajax({
 			type: 'PUT',
@@ -91,6 +92,7 @@ edita = function(){
 			},
 			success: print
 		});
+		$('#abrir').modal('hide');
 	}
 }
 
