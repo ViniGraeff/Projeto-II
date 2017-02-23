@@ -1,4 +1,4 @@
-var text, aux, str, NOME, VALOR, STATUS, ESTOQUE, flag=0, flag2=0;
+var text, aux, str, NOME, VALOR, STATUS, ESTOQUE, flag=0, flag2=0, igual=0;
 
 var servidor="http://192.168.1.168:3000/product";
 
@@ -24,6 +24,7 @@ print = function(){
 		}
 	});
 	console.log("printou");
+	$('#alerta').hide();
 }
 
 save = function(){
@@ -33,11 +34,17 @@ save = function(){
 	ESTOQUE = $('#estoque').val();
 }
 
-adiciona = function (){
-	save();
-	if(NOME=="" || VALOR=="" || STATUS=="" || ESTOQUE==""){
+varredura = function(){
+	for(var i=0;i<text.length;i++){
+		if(NOME==text[i].nome){
+			igual=1;
+		}
+	}
+	confereIgual();
+}
 
-	}else{
+confereIgual = function(){
+	if(igual==0){
 		$.ajax({
 			type: 'POST',
 			dataType: 'json',
@@ -50,6 +57,20 @@ adiciona = function (){
 			},
 			success: print
 		});
+	}else{
+		$('#alerta').show();
+		alert("Item já existente");
+		igual=0;
+	}
+}
+
+adiciona = function (){
+	save();
+	console.log(NOME);
+	if(NOME=="" || VALOR=="" || STATUS=="" || ESTOQUE==""){
+		alert("Preencha todos os campos");
+	}else{
+		varredura();
 	}
 }
 
