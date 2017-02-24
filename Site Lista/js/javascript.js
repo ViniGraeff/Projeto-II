@@ -1,6 +1,6 @@
-var text, aux, str, NOME, VALOR, STATUS, ESTOQUE, flag=0, flag2=0, igual=0;
+var text, aux, str, NOME, VALOR, STATUS, ESTOQUE, flag=0, flag2=0, igual=0, del;
 
-var servidor="http://192.168.0.13:3000/product";
+var servidor="http://192.168.1.172:3000/product";
 
 print = function(){
 	$('#table').empty();
@@ -13,12 +13,12 @@ print = function(){
 			str=str.replace(".",",");
 			if(flag==0){
 				if(text[i].status=="A"){
-					$('#table').append('<tr><td>'+text[i].id+'</td><td>'+text[i].nome+'</td><td>'+'R$ '+str+'</td><td>'+'<img src="img/happybatman.jpg" alt= "Batman Feliz" style="width:40px;height:40px; border-radius:50%;";>'+'</td><td>'+text[i].estoque+'</td><td>'+'<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true" data-toggle="modal" data-target="#abrir" onclick="preencher('+i+')"></span></button>'+'</td><td>'+'<button type="button" class="btn btn-default btn-sm"  onclick="deleta('+aux+')"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></button>'+'</td></tr>');
+					$('#table').append('<tr><td>'+text[i].id+'</td><td>'+text[i].nome+'</td><td>'+'R$ '+str+'</td><td>'+'<img src="img/happybatman.jpg" alt= "Batman Feliz" style="width:40px;height:40px; border-radius:50%;";>'+'</td><td>'+text[i].estoque+'</td><td>'+'<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true" data-toggle="modal" data-target="#abrir" onclick="preencher('+i+')"></span></button>'+'</td><td>'+'<button type="button" class="btn btn-default btn-sm" onclick="deleta('+aux+')" data-toggle="modal" data-target="#abrir"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></button>'+'</td></tr>');
 				}
 			}
 			else {
 				if(text[i].status=="I"){
-					$('#table').append('<tr><td>'+text[i].id+'</td><td>'+text[i].nome+'</td><td>'+'R$ '+str+'</td><td>'+'<img src="img/sadbatman.jpg" alt= "Batman Feliz" style="width:40px;height:40px; border-radius:50%;";>'+'</td><td>'+text[i].estoque+'</td><td>'+'<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true" data-toggle="modal" data-target="#abrir" onclick="preencher('+i+')"></span></button>'+'</td><td>'+'<button type="button" class="btn btn-default btn-sm"  onclick="deleta('+aux+')"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></button>'+'</td></tr>');
+					$('#table').append('<tr><td>'+text[i].id+'</td><td>'+text[i].nome+'</td><td>'+'R$ '+str+'</td><td>'+'<img src="img/sadbatman.jpg" alt= "Batman Feliz" style="width:40px;height:40px; border-radius:50%;";>'+'</td><td>'+text[i].estoque+'</td><td>'+'<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil" aria-hidden="true" data-toggle="modal" data-target="#abrir" onclick="preencher('+i+')"></span></button>'+'</td><td>'+'<button type="button" class="btn btn-default btn-sm" onclick="deleta('+aux+')" data-toggle="modal" data-target="#abrir"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></button>'+'</td></tr>');
 				}
 			}
 		}
@@ -123,16 +123,25 @@ noPaste = function(){
 }
 
 deleta = function(x){
+	del = x;
+	flag2=2;
+	tituloModal();
+	hideButton();
+	$('.textBox').hide();
+}
+
+deletaConfirma = function(){
 	$.ajax({
 		type: 'DELETE',
-		url: servidor +"/"+ x,
+		url: servidor +"/"+ del,
 		success: print
 	});
-	console.log("deletou");
+	$('#abrir').modal('hide');
 }
 
 preencher = function(z){
 	$('#alerta').hide();
+	$('.textBox').show();
 	document.getElementById('nome').value = text[z].nome;
 	document.getElementById('valor').value = text[z].valor;
 	document.getElementById('status').value = text[z].status;
@@ -154,8 +163,10 @@ mudarTitulo = function(){
 tituloModal = function(){
 	if(flag2==0){
 		document.getElementById('tituloModal').innerHTML = "Adicionar Itens";
-	}else{
+	}else if(flag2==1){
 		document.getElementById('tituloModal').innerHTML = "Editar Itens";
+	}else{
+		document.getElementById('tituloModal').innerHTML = "Tem certeza que deseja excluir este item?";
 	}
 }
 
@@ -163,9 +174,15 @@ hideButton = function(){
 	if(flag2==0){
 	$("#adiciona").show();
 	$("#editar").hide();
-	}else{
+	$("#botdel").hide();
+	}else if(flag2==1){
 	$("#adiciona").hide();
 	$("#editar").show();
+	$("#botdel").hide();
+	}else{
+	$("#adiciona").hide();
+	$("#editar").hide();
+	$("#botdel").show();
 	}
 }
 
@@ -190,6 +207,7 @@ actions = function(){
 		flag2 = 0;
 		tituloModal();
 		hideButton();
+		$('.textBox').show();
 	});
 
 	$("#adiciona").mouseup(function(){
@@ -198,6 +216,10 @@ actions = function(){
 
 	$("#editar").mouseup(function(){
 		edita();
+	});
+
+	$('#botdel').mouseup(function(){
+		deletaConfirma();
 	});
 
 	$("#ativos").mouseup(function(){
