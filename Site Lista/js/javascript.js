@@ -36,7 +36,7 @@ save = function(){
 
 varredura = function(){
 	for(var i=0;i<text.length;i++){
-		if(NOME==text[i].nome){
+		if(NOME.toLowerCase()===text[i].nome.toLowerCase()){
 			igual=1;
 		}
 	}
@@ -55,13 +55,15 @@ confereIgual = function(){
 				status: STATUS,
 				estoque: ESTOQUE
 			},
-			success: print
+			success: print,
+			error: timerAlert2
 		});
 		$('#abrir').modal('hide');
+		timerAlert3();
+		$('#textalert3').html("Item adicionado com sucesso!");
 	}else{
-		$('#alerta').show();
-		$('#textalert').html("Item já existente!");
 		timerAlert();
+		$('#textalert').html("Item já existente!");
 		igual=0;
 	}
 }
@@ -69,9 +71,8 @@ confereIgual = function(){
 adiciona = function (){
 	save();
 	if(NOME=="" || VALOR=="" || STATUS=="" || ESTOQUE==""){
-		$('#alerta').show();
-		$('#textalert').html("Todos os campos devem estar preenchidos!");
 		timerAlert();
+		$('#textalert').html("Todos os campos devem estar preenchidos!");
 	}else{
 		varredura();
 	}
@@ -80,9 +81,8 @@ adiciona = function (){
 edita = function(){ 
 	save();
 	if(NOME=="" || VALOR=="" || STATUS=="" || ESTOQUE==""){
-		$('#alerta').show();
-		$('#textalert').html("Todos os campos devem estar preenchidos!");
 		timerAlert();
+		$('#textalert').html("Todos os campos devem estar preenchidos!");
 	}else{
 		$.ajax({
 			type: 'PUT',
@@ -94,13 +94,37 @@ edita = function(){
 				status: STATUS,
 				estoque: ESTOQUE
 			},
-			success: print
+			success: print,
+			error: timerAlert2
 		});
 		$('#abrir').modal('hide');
+		timerAlert3();
+		$('#textalert3').html("Item editado com sucesso!");
 	}
 }
 
 timerAlert = function(){
+	$('#alerta').show();
+	window.setTimeout(function() {
+    $(".alert").slideUp(500, function(){
+        $(this).hide(); 
+    });
+}, 4000);
+}
+
+timerAlert2 = function(){
+	$('#alerta2').show();
+	$('#textalert2').html("Ops! Ocorreu algum problema...");
+	window.setTimeout(function() {
+    $(".alert").slideUp(500, function(){
+        $(this).hide(); 
+    });
+}, 4000);
+	print();
+}
+
+timerAlert3 = function(){
+	$('#alerta3').show();
 	window.setTimeout(function() {
     $(".alert").slideUp(500, function(){
         $(this).hide(); 
@@ -134,7 +158,9 @@ deletaConfirma = function(){
 	$.ajax({
 		type: 'DELETE',
 		url: servidor +"/"+ del,
-		success: print
+		success: print,
+		error: timerAlert2
+		
 	});
 	$('#abrir').modal('hide');
 }
@@ -269,6 +295,8 @@ function isNumberKey2(evt)
 }
 
 $(document).ready(function(){
+	$('#alerta2').hide();
+	$('#alerta3').hide();
 	mudarTitulo();
 	print();
 	actions();
