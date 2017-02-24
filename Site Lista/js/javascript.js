@@ -1,6 +1,6 @@
 var text, aux, str, NOME, VALOR, STATUS, ESTOQUE, flag=0, flag2=0, igual=0;
 
-var servidor="http://192.168.1.168:3000/product";
+var servidor="http://192.168.0.13:3000/product";
 
 print = function(){
 	$('#table').empty();
@@ -60,16 +60,18 @@ confereIgual = function(){
 		$('#abrir').modal('hide');
 	}else{
 		$('#alerta').show();
-		alert("Item já existente");
+		$('#textalert').html("Item já existente!");
+		timerAlert();
 		igual=0;
 	}
 }
 
 adiciona = function (){
 	save();
-	console.log(NOME);
 	if(NOME=="" || VALOR=="" || STATUS=="" || ESTOQUE==""){
-		alert("Preencha todos os campos");
+		$('#alerta').show();
+		$('#textalert').html("Todos os campos devem estar preenchidos!");
+		timerAlert();
 	}else{
 		varredura();
 	}
@@ -78,7 +80,9 @@ adiciona = function (){
 edita = function(){ 
 	save();
 	if(NOME=="" || VALOR=="" || STATUS=="" || ESTOQUE==""){
-	alert("Preencha todos os campos");
+		$('#alerta').show();
+		$('#textalert').html("Todos os campos devem estar preenchidos!");
+		timerAlert();
 	}else{
 		$.ajax({
 			type: 'PUT',
@@ -94,6 +98,14 @@ edita = function(){
 		});
 		$('#abrir').modal('hide');
 	}
+}
+
+timerAlert = function(){
+	window.setTimeout(function() {
+    $(".alert").slideUp(500, function(){
+        $(this).hide(); 
+    });
+}, 4000);
 }
 
 noPaste = function(){
@@ -120,6 +132,7 @@ deleta = function(x){
 }
 
 preencher = function(z){
+	$('#alerta').hide();
 	document.getElementById('nome').value = text[z].nome;
 	document.getElementById('valor').value = text[z].valor;
 	document.getElementById('status').value = text[z].status;
@@ -170,6 +183,7 @@ actions = function(){
 	condicoes();
 
 	$("#modalclean").click(function(){
+		$('#alerta').hide();
 		$('#nome').val("");
 		$('#valor').val("");
 		$('#estoque').val("");
